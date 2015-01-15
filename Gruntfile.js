@@ -2,7 +2,13 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    concat: {
+    concat: {//TODO add stuff
+      dist: {
+        src: [
+          'public/client/*.js'
+        ],
+        dest: 'public/client/concatified.js'
+      }
     },
 
     mochaTest: {
@@ -20,12 +26,21 @@ module.exports = function(grunt) {
       }
     },
 
-    uglify: {
+    uglify: {//TODO add stuff
+      my_target: {
+        files: {
+          'public/client/client.min.js': ['public/client/concatified.js']
+        }
+      }
     },
 
     jshint: {
-      files: [
-        // Add filespec list here
+      beforeconcat: [
+        //  filespec list here
+        'app/**/*.js', 'views/**/*.js', 'public/**/*.js','*.js','app/*.js'
+      ],
+      afterconcat: [
+        'public/client/concatified.js'
       ],
       options: {
         force: 'true',
@@ -37,7 +52,12 @@ module.exports = function(grunt) {
       }
     },
 
-    cssmin: {
+    cssmin: {//TODO add stuff
+      target: {
+          files: {
+            'public/styles.min.css': ['public/*.css']
+          }
+        }
     },
 
     watch: {
@@ -58,7 +78,7 @@ module.exports = function(grunt) {
     },
 
     shell: {
-      prodServer: {
+      prodServer: {//TODO?
       }
     },
   });
@@ -93,11 +113,12 @@ module.exports = function(grunt) {
     'mochaTest'
   ]);
 
-  grunt.registerTask('build', [
+  grunt.registerTask('build', ['jshint','concat', 'jshint', 'uglify'
   ]);
 
   grunt.registerTask('upload', function(n) {
     if(grunt.option('prod')) {
+      grunt.task.run(['build']);
       // add your production server task here
     } else {
       grunt.task.run([ 'server-dev' ]);
@@ -106,6 +127,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('deploy', [
     // add your deploy tasks here
+    'upload'
   ]);
 
 
